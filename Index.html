@@ -1,0 +1,188 @@
+<html><head><base 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PAGO INTERNET DOCENTES IRH</title>
+<style>
+body {
+    font-family: "Times New Roman", Times, serif;
+    background-image: url(we.jpg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.tables-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+table {
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+table, th, td {
+    border: 1px solid black;
+    padding: 10px;
+}
+
+label {
+    display: inline-block;
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+input, select {
+    width: 200px;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+#pagoBtn {
+    background-color: #808080;
+    color: white;
+    border: none;
+}
+
+#facturaBtn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>PAGO INTERNET DOCENTES IRH</h1>
+    <form action="conexion.php" method="POST">
+        <div class="tables-container">
+            <table>
+                <tr>
+                    <th colspan="2">DOCENTES</th>
+                </tr>
+                <tr>
+                    <td><label for="id">ID:</label></td>
+                    <td><input type="text" id="id" name="id" required></td>
+                </tr>
+                <tr>
+                    <td><label for="nombre">NOMBRE:</label></td>
+                    <td><input type="text" id="nombre" name="nombre" required></td>
+                </tr>
+                <tr>
+                    <td><label for="telefono">TELÉFONO:</label></td>
+                    <td><input type="tel" id="telefono" name="telefono" required></td>
+                </tr>
+                <tr>
+                    <td><label for="dispositivo">DISPOSITIVO:</label></td>
+                    <td>
+                        <select id="dispositivo" name="dispositivo" required>
+                            <option value="">Seleccione un dispositivo</option>
+                            <option value="laptop">Laptop</option>
+                            <option value="tablet">Tablet</option>
+                            <option value="smartphone">Smartphone</option>
+                            <option value="desktop">Desktop</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="mes">MES:</label></td>
+                    <td>
+                        <input type="date" id="mes" name="mes" required>
+                        <span id="mesSeleccionado"></span>
+                    </td>
+                </tr>
+            </table>
+
+            <table>
+                <tr>
+                    <th colspan="2">FACTURA</th>
+                </tr>
+                <tr>
+                    <td><label for="idFactura">ID FACTURA:</label></td>
+                    <td><input type="text" id="idFactura" name="idFactura" readonly></td>
+                </tr>
+                <tr>
+                    <td><label for="nombreFactura">NOMBRE:</label></td>
+                    <td><input type="text" id="nombreFactura" name="nombreFactura" readonly></td>
+                </tr>
+                <tr>
+                    <td><label for="mesFactura">MES:</label></td>
+                    <td><input type="text" id="mesFactura" name="mesFactura" readonly></td>
+                </tr>
+                <tr>
+                    <td><label for="aporte">APORTE:</label></td>
+                    <td><input type="number" id="aporte" name="aporte" required></td>
+                </tr>
+            </table>
+        </div>
+
+        <button type="button" id="pagoBtn">Pago</button>
+        <button type="submit" value="Guardar datos">Factura</button>
+    </form>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const pagoForm = document.getElementById('pagoForm');
+    const pagoBtn = document.getElementById('pagoBtn');
+    const mesInput = document.getElementById('mes');
+    const mesSeleccionado = document.getElementById('mesSeleccionado');
+
+    mesInput.addEventListener('change', function() {
+        const date = new Date(this.value);
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        mesSeleccionado.textContent = date.toLocaleDateString('es-ES', options);
+    });
+
+    pagoBtn.addEventListener('click', function() {
+        document.getElementById('idFactura').value = document.getElementById('id').value;
+        document.getElementById('nombreFactura').value = document.getElementById('nombre').value;
+        document.getElementById('mesFactura').value = mesSeleccionado.textContent;
+    });
+
+    pagoForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(pagoForm);
+        
+        fetch('guardar_factura.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Factura guardada correctamente');
+            } else {
+                alert('Error al guardar la factura');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al procesar la solicitud');
+        });
+    });
+});
+</script>
+
+</body></html>
